@@ -20,7 +20,8 @@ nvm alias default lts/hydrogen
 
 ## Ler arquivo compose dentro de uma pasta
 
-docker compose -f infra/compose.yaml up
+docker compose -f infra/compose.yaml up -d
+docker compose -f infra/compose.yaml down
 
 ## Derrubar container
 
