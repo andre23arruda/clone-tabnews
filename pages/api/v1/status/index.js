@@ -1,7 +1,12 @@
 import database from 'infra/database'
 
 export default async function status(request, response) {
-	const result = await database.query('SELECT 1 + 1 as sum;')
-	console.log(result.rows)
-	response.status(200).json({ msg: 'Deu bom!!' })
+	const { version, maxConnections, usedConnections } = await database.healthy()
+	const updatedAt = new Date().toISOString()
+	response.status(200).json({
+		updated_at: updatedAt,
+		version,
+		max_connections: maxConnections,
+		used_connections: usedConnections,
+	})
 }
