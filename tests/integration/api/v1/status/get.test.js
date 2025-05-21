@@ -7,12 +7,12 @@ test('GET to /api/v1/status should return 200', async () => {
 	const pasedDate = new Date(responseBody.updated_at).toISOString()
 	expect(responseBody.updated_at).toEqual(pasedDate)
 
-	expect(responseBody.version).toBeDefined()
-	expect(responseBody.version).toBeGreaterThanOrEqual(0)
+	expect(responseBody.dependencies.database.version).toBeDefined()
+	expect(responseBody.dependencies.database.version).toBeGreaterThanOrEqual(0)
 
-	expect(responseBody.max_connections).toBeDefined()
-	expect(responseBody.max_connections).toBeGreaterThanOrEqual(0)
+	expect(responseBody.dependencies.database.max_connections).toBeDefined()
+	expect(responseBody.dependencies.database.max_connections).toBeGreaterThanOrEqual(100)
 
-	expect(responseBody.used_connections).toBeDefined()
-	expect(responseBody.used_connections).toBeGreaterThanOrEqual(0)
+	expect(responseBody.dependencies.database.used_connections).toBeDefined()
+	expect(responseBody.dependencies.database.used_connections).toEqual(1)
 })
