@@ -9,9 +9,14 @@ async function query(queryObject) {
 		password: process.env.POSTGRES_PASSWORD,
 	})
 	await client.connect()
-	const result = await client.query(queryObject)
-	await client.end()
-	return result
+	try {
+		const result = await client.query(queryObject)
+		return result
+	} catch (error) {
+		console.log(error)
+	} finally {
+		await client.end()
+	}
 }
 
 async function healthy() {
@@ -30,14 +35,14 @@ async function healthy() {
 	const maxConnectionsResult = await client.query('SHOW max_connections;')
 	const maxConnections = parseInt(maxConnectionsResult.rows[0].max_connections)
 
-	const usedConnectionsResult = await client.query('SELECT count(*) AS used_connections FROM pg_stat_activity;')
-	const usedConnections = parseInt(usedConnectionsResult.rows[0].used_connections)
+	const usedConnectionsResult = await client.query("SELECT count(*)::int FROM pg_stat_activity WHERE datname = 'local_db';")
+	const usedConnections = usedConnectionsResult.rows[0].count
 
 	await client.end()
 	return {
-		version: serverVersion,
-		maxConnections: maxConnections,
-		usedConnections: usedConnections,
+		serverVersion,
+		maxConnections,
+		usedConnections,
 	}
 }
 
