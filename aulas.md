@@ -30,3 +30,10 @@ docker compose down
 ## postgres
 
 psql --host=localhost --username=postgres --port=5432
+
+
+# Dia 23
+
+## Executar apenas teste de `migrations`
+npm run test:watch -- migrations
+npm run test:watch -- migrations.post
