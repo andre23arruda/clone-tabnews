@@ -1,11 +1,10 @@
-import database from "infra/database"
+import orchestrator from 'tests/orchestrator.js'
+import { cleanDataBase } from 'tests/utils'
 
-async function cleanDataBase() {
-	await database.query('drop schema public cascade;')
-	await database.query('create schema public;')
-}
-
-beforeAll(cleanDataBase)
+beforeAll(async () => {
+	await orchestrator.waitForAllServices()
+	await cleanDataBase()
+})
 
 test('PUT to /api/v1/migrations and check connections', async () => {
 	for (let i = 0; i < 30; i++) {
