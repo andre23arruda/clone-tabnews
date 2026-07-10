@@ -1,12 +1,12 @@
-import { Client } from 'pg'
+import { Client } from "pg";
 
 function getSSLValues() {
 	if (process.env.POSGRES_CA) {
 		return {
-			ca: process.env.POSGRES_CA
-		}
+			ca: process.env.POSGRES_CA,
+		};
 	}
-	return process.env.NODE_ENV === 'production' ? true : false
+	return process.env.NODE_ENV === "production" ? true : false;
 }
 
 async function getNewClient() {
@@ -16,20 +16,20 @@ async function getNewClient() {
 		user: process.env.POSTGRES_USER,
 		database: process.env.POSTGRES_DB,
 		password: process.env.POSTGRES_PASSWORD,
-		ssl: getSSLValues()
-	})
-	await client.connect()
-	return client
+		ssl: getSSLValues(),
+	});
+	await client.connect();
+	return client;
 }
 
 async function query(queryObject) {
-	let client
+	let client;
 	try {
-		client = await getNewClient()
-		const result = await client.query(queryObject)
-		return result
+		client = await getNewClient();
+		const result = await client.query(queryObject);
+		return result;
 	} catch (error) {
-		throw error
+		throw error;
 	} finally {
 		await client?.end();
 	}
@@ -42,28 +42,32 @@ async function healthy() {
 		user: process.env.POSTGRES_USER,
 		database: process.env.POSTGRES_DB,
 		password: process.env.POSTGRES_PASSWORD,
-	})
-	await client.connect()
+	});
+	await client.connect();
 
-	const versionResult = await client.query('SHOW server_version;')
-	const serverVersion = parseInt(versionResult.rows[0].server_version)
+	const versionResult = await client.query("SHOW server_version;");
+	const serverVersion = parseInt(versionResult.rows[0].server_version);
 
-	const maxConnectionsResult = await client.query('SHOW max_connections;')
-	const maxConnections = parseInt(maxConnectionsResult.rows[0].max_connections)
+	const maxConnectionsResult = await client.query("SHOW max_connections;");
+	const maxConnections = parseInt(
+		maxConnectionsResult.rows[0].max_connections,
+	);
 
-	const usedConnectionsResult = await client.query("SELECT count(*)::int FROM pg_stat_activity WHERE datname = 'local_db';")
-	const usedConnections = usedConnectionsResult.rows[0].count
+	const usedConnectionsResult = await client.query(
+		"SELECT count(*)::int FROM pg_stat_activity WHERE datname = 'local_db';",
+	);
+	const usedConnections = usedConnectionsResult.rows[0].count;
 
-	await client.end()
+	await client.end();
 	return {
 		serverVersion,
 		maxConnections,
 		usedConnections,
-	}
+	};
 }
 
 export default {
 	getNewClient,
 	healthy,
 	query,
-}
+};

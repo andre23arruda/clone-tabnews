@@ -1,4 +1,4 @@
-import { loadEnvConfig } from '@next/env'
+import { loadEnvConfig } from "@next/env";
 
 test("Verificar que o ambiente é de teste", () => {
 	expect(process.env.NODE_ENV).toBe("test");
